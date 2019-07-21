@@ -1,7 +1,11 @@
 package com.tunga.gesca.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +23,10 @@ public class User extends AbstractEntity {
 
 	@Column(name = "password")
 	private String password;
+
+//	@JsonInclude(value = Include.NON_EMPTY)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<AnnualSale> annualSales;
 
 	public User() {
 		super();
@@ -62,6 +70,14 @@ public class User extends AbstractEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public List<AnnualSale> getAnnualSales() {
+		return annualSales;
+	}
+
+	public void setAnnualSales(List<AnnualSale> annualSales) {
+		this.annualSales = annualSales;
 	}
 
 }

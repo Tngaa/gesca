@@ -15,11 +15,11 @@ import javax.persistence.TemporalType;
 public abstract class AbstractEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id", updatable = false)
 	private Integer id;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "creation_date")
+	@Column(name = "creation_date", insertable = false, updatable = false)
 	private Date creationDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
