@@ -53,6 +53,7 @@ public class AnnualSaleController {
 	
 	@PutMapping("/{userId}/annual-sales/{annualSaleId}")
 	public AnnualSale updateAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId, @RequestBody AnnualSale annualSale) {
+		
 		AnnualSale exAnnualSale = annualSaleRepository.findByIdAndUserId(annualSaleId, userId);
 		
 		// Inderdit -> exAnnaulSale.setId(annualSale.getId());
