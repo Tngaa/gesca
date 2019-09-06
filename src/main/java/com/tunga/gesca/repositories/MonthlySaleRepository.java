@@ -8,11 +8,13 @@ import org.springframework.data.repository.query.Param;
 
 import com.tunga.gesca.entities.MonthlySale;
 
-public interface MonthlySaleRepository extends CrudRepository< MonthlySale, Integer> {
-	
+public interface MonthlySaleRepository extends CrudRepository<MonthlySale, Integer> {
+
 	@Query("SELECT ms FROM MonthlySale ms WHERE ms.annualSale.id = :annualSaleId AND ms.annualSale.user.id = :userId")
-	public List<MonthlySale> findByAnnualIdAndUserId(@Param("annualSaleId") Integer annualSaleId, @Param("userId") Integer userId);
+	public List<MonthlySale> findByAnnualIdAndUserId(@Param("annualSaleId") Integer annualSaleId,
+			@Param("userId") Integer userId);
 
 	@Query("SELECT ms FROM MonthlySale ms WHERE ms.annualSale.id = :annualSaleId AND ms.annualSale.user.id = :userId AND ms.id = :monthlySaleId")
-	public MonthlySale findBySpecificMonthlySale(@Param("annualSaleId") Integer annualSaleId, @Param("userId") Integer userId, @Param("monthlySaleId") Integer monthlySaleId);
+	public MonthlySale findBySpecificMonthlySale(@Param("annualSaleId") Integer annualSaleId,
+			@Param("userId") Integer userId, @Param("monthlySaleId") Integer monthlySaleId);
 }

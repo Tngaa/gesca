@@ -14,7 +14,7 @@ public class MonthlySale extends AbstractEntity {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name="id_annual_sale", nullable = false)
+	@JoinColumn(name = "id_annual_sale", nullable = false)
 	private AnnualSale annualSale;
 
 	@Column(name = "month")
@@ -25,10 +25,9 @@ public class MonthlySale extends AbstractEntity {
 
 	@Column(name = "social_charges")
 	private Float socialCharges;
-	
-	@Column(name="professional_fees")
+
+	@Column(name = "professional_fees")
 	private Float professionalFees;
-	
 
 	public MonthlySale() {
 		super();
@@ -82,6 +81,5 @@ public class MonthlySale extends AbstractEntity {
 	public void setProfessionalFees(Float professionalFees) {
 		this.professionalFees = professionalFees;
 	}
-	
 
-	}
+}

@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tunga.gesca.entities.AnnualSale;
+import com.tunga.gesca.entities.MonthlySale;
 import com.tunga.gesca.entities.User;
 import com.tunga.gesca.repositories.AnnualSaleRepository;
+import com.tunga.gesca.repositories.MonthlySaleRepository;
 import com.tunga.gesca.repositories.UserRepository;
 
 @RestController
@@ -25,9 +28,12 @@ import com.tunga.gesca.repositories.UserRepository;
 public class AnnualSaleController {
 	@Autowired
 	private AnnualSaleRepository annualSaleRepository;
+	
+	@Autowired
+	private MonthlySaleRepository monthlySaleRepository;
 
 	@Autowired
-	private UserRepository userRepository;	
+	private UserRepository userRepository;
 
 	@GetMapping("/{userId}/annual-sales")
 	public List<AnnualSale> getAnnualSales(@PathVariable Integer userId) {
@@ -35,14 +41,20 @@ public class AnnualSaleController {
 		return annualSaleRepository.findByUserId(userId);
 	}
 
+	@GetMapping("/{userId}/annual-sales/{annualSaleId}")
+	public AnnualSale getAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId) {
+		return annualSaleRepository.findByIdAndUserId(annualSaleId, userId);
+	}
+	
 	@PostMapping("/{userId}/annual-sales")
-	public AnnualSale createAnnualSale(@PathVariable Integer userId, @RequestBody AnnualSale annualSale) throws Exception {
-		
+	public AnnualSale createAnnualSale(@PathVariable Integer userId, @RequestBody AnnualSale annualSale)
+			throws Exception {
+
 		Optional<User> optUser = userRepository.findById(userId);
 		if (!optUser.isPresent()) {
 			throw new Exception("User not exists by id " + userId);
 		}
-		
+
 		User user = optUser.get();
 		annualSale.setUser(user);
 		AnnualSale exAnnualSale = annualSaleRepository.save(annualSale);
@@ -50,22 +62,31 @@ public class AnnualSaleController {
 		return exAnnualSale;
 
 	}
-	
+
 	@PutMapping("/{userId}/annual-sales/{annualSaleId}")
-	public AnnualSale updateAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId, @RequestBody AnnualSale annualSale) {
+	public AnnualSale updateAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId,
+			@RequestBody AnnualSale annualSale) {
+
+		AnnualSale exAnnualSale = annualSaleRepository.findByIdAndUserId(annualSaleId, userId);
+
+		// Inderdit -> exAnnaulSale.setId(annualSale.getId());
+		exAnnualSale.setYear(annualSale.getYear());
+
+		return annualSaleRepository.save(exAnnualSale);
+
+	}
+
+	@Transactional
+	@DeleteMapping("/{userId}/annual-sales/{annualSaleId}")
+	public ResponseEntity<?> deleteAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId) {
+		
 		
 		AnnualSale exAnnualSale = annualSaleRepository.findByIdAndUserId(annualSaleId, userId);
 		
-		// Inderdit -> exAnnaulSale.setId(annualSale.getId());
-		exAnnualSale.setYear(annualSale.getYear());
-		
-		return annualSaleRepository.save(exAnnualSale);
-		
-	}
-	
-	@Transactional
-	@DeleteMapping("/{userId}/annual-sales/{annualSaleId}")
-	public void deleteAnnualSale(@PathVariable Integer userId, @PathVariable Integer annualSaleId) {
-		annualSaleRepository.deleteByIdAndUserId(annualSaleId, userId);
+//		annualSaleRepository.deleteByIdAndUserId(annualSaleId, userId);
+		List<MonthlySale> monthlySales = exAnnualSale.getMonthlySales();
+		monthlySaleRepository.deleteAll(monthlySales);
+		annualSaleRepository.delete(exAnnualSale);
+		return ResponseEntity.ok().build();
 	}
 }

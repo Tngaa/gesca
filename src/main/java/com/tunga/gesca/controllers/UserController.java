@@ -24,24 +24,24 @@ public class UserController {
 
 	@GetMapping
 	public List<User> getUsers() {
-		
-		return (List<User>)userRepository.findAll();
+
+		return (List<User>) userRepository.findAll();
 	}
-	
-	
+
 	@GetMapping("/{userId}")
 	public User getUser(@PathVariable Integer userId) {
 		User user = null;
-		
+
 		Optional<User> optUser = userRepository.findById(userId);
-		
-		if(optUser.isPresent()) {
+
+		if (optUser.isPresent()) {
 			user = optUser.get();
-			
-			List<AnnualSale> sortedAnnualSales = user.getAnnualSales().stream().sorted(Comparator.comparingInt(AnnualSale::getYear).reversed()).collect(Collectors.toList());
+
+			List<AnnualSale> sortedAnnualSales = user.getAnnualSales().stream()
+					.sorted(Comparator.comparingInt(AnnualSale::getYear).reversed()).collect(Collectors.toList());
 			user.setAnnualSales(sortedAnnualSales);
 		}
-		
+
 		return user;
 	}
 }
